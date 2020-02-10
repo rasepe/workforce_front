@@ -1,6 +1,89 @@
-function seeAll() {
+function loadIds(selectId) {
+	var constructedUrl = "http://localhost:8080/employees/";
 
-//	var personName = document.getElementById("name").value;
+	var result;
+	$.ajax({
+		type: "GET",
+		url: constructedUrl,
+		success: function(data) {
+
+			manage(data,selectId);
+
+		},
+		error: function(){
+			alert("json not found");
+		}
+	});
+
+
+}
+
+
+
+function manage(objects,selectId) {
+	var options;
+	for (var i=0; i<objects.length; i++) {
+		options += '<option value="'+objects[i].id+'">'+objects[i].id+'</option>';	
+	}
+	document.getElementById(selectId).innerHTML = options;
+}
+
+
+
+function update() {
+	var editId = document.getElementById("employeeId")[document.getElementById("employeeId").selectedIndex].value;
+	var editName = document.getElementById("editName").value;
+	var editRole = document.getElementById("editRole")[document.getElementById("editRole").selectedIndex].value;
+
+
+	var editEmployee = {
+			"name": editName,
+			"role": editRole
+	}
+
+	editEmployee = JSON.stringify(editEmployee) + '{"id":'+editId+'}';
+
+	var constructedURL = "http://localhost:8080/employees/" + editId; //
+
+	$.ajax({
+		type: "PUT",
+		contentType: "application/json",
+		url: constructedURL,
+		data: editEmployee, 
+		success: function(data) {
+
+		},
+		error: function(){
+			alert("json not found");
+		}
+	});
+
+}
+
+
+
+function deleteEmployee() {
+	var deleteId = document.getElementById("deletedEmployeeId")[document.getElementById("deletedEmployeeId").selectedIndex].value;
+	var constructedURL = "http://localhost:8080/employees/" + deleteId;
+
+	$.ajax({
+		type: "DELETE",
+		contentType: "application/json",
+		url: constructedURL,
+		data: deleteId, 
+		success: function(data) {
+
+		},
+		error: function(){
+			alert("json not found");
+		}
+	});
+
+}
+
+
+
+function seeAll() {
 
 	var constructedUrl = "http://localhost:8080/employees/";
 
@@ -22,10 +105,10 @@ function seeAll() {
 }
 
 
+
 function seeRole() {
 
-//	var personName = document.getElementById("name").value;
-    var role = document.getElementById("role")[document.getElementById("role").selectedIndex].value;
+	var role = document.getElementById("role")[document.getElementById("role").selectedIndex].value;
 	var constructedUrl = "http://localhost:8080/employees/role/";
 
 	var result;
@@ -46,117 +129,53 @@ function seeRole() {
 }
 
 
+
 function addNew() {
-	
+
 	var newEmployeeName = document.getElementById("name").value;
 	console.log(newEmployeeName);
-	
+
 	var newEmployeeRole = document.getElementById("role")[document.getElementById("role").selectedIndex].value;
 
-	var salary;
-	
-	switch (newEmployeeRole) {
-		case "ASSISTANT":
-			salary = 1000;
-			break;
-		case "MANAGER":
-			salary = 2000;
-			break;
-		case "BOSS":
-			salary = 3000;
-			break;
-			
-	}
-	
+
+
 	var newEmployee = {
 			"name": newEmployeeName,
-			"role": newEmployeeRole,
-			"salary": salary
+			"role": newEmployeeRole
 	}
-	
-	
+
+
 	console.log(newEmployee);
 
 
 	$.ajax({
-			type: "POST",
-			 contentType: "application/json",
-			 url: "http://localhost:8080/employees",
-		        data: JSON.stringify(newEmployee),    
-			success: function(data) {
-				var returnedData = JSON.parse(data);
-				console.log(returnedData);
-				alert("Hola soy " + returnedData.name + " y me gusta programar en "+ returnedData.favoriteProgrammingLanguage);
-			},
-			error: function(){
-				alert("json not found");
-			}
+		type: "POST",
+		contentType: "application/json",
+		url: "http://localhost:8080/employees",
+		data: JSON.stringify(newEmployee),    
+		success: function(data) {
+
+		},
+		error: function(){
+			alert("json not found");
+		}
 	});
 
-	
-	//  window.location="http://localhost/workforce/index.html";
-
-
 }
-
-
-
-
-
-
-
-
-
 
 
 
 function print(objects, id) {
+
 	var result = "";
-	for (var i=0; i<objects.length; i++) {
-		result += JSON.stringify(objects[i])+"<br>";
-		document.getElementById(id).innerHTML = result;
+	if (objects.length>0) {
+		for (var i=0; i<objects.length; i++) {
+			result += JSON.stringify(objects[i])+"<br>";
+		}
+
 	}
-
-
+	else {
+		result = "NO RESULTS";
+	}
+	document.getElementById(id).innerHTML = result;
 }
-
-/*$(function() {
-	
-	
-
-	$('#new').on('submit', function() {
-
-		var hola = $("#new").serialize();
-	    
-	    $.ajax({
-			data: $("#new").serialize(),
-			type: "POST",
-			url: "http://localhost:8080/employees",
-			success: function(data) {
-				var returnedData = JSON.parse(data);
-				console.log(returnedData);
-				alert("Hola soy " + returnedData.name + " y me gusta programar en "+ returnedData.favoriteProgrammingLanguage);
-			},
-			error: function(){
-				alert("json not found");
-			}
-		});
-			
-
-	});
-
-
-
-
-
-
-
-
-
-
-
-
-
-	});*/
-
-
